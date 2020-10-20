@@ -1,5 +1,6 @@
 import bs4
 from bs4 import BeautifulSoup
+import numpy as np
 import urllib.request
 
 reviews = 'https://www.metal.de/reviews'
@@ -84,6 +85,12 @@ class MetaldeParser():
     def parse_review(self, url):
         data = {}
         soup = self.get_html_page(url)
+        review_body = soup.find(self.filter('itemprop', 'reviewBody'))
+        if review_body:
+            p_list = review_body.find_all('p')
+            data['text'] = ' '.join([p.text for p in p_list])
+        else:
+            data['text'] = '-'
         publish_date = soup.find(self.filter('class',['date']))
         if publish_date:
             data['publish_date'] = publish_date.text
@@ -112,17 +119,29 @@ class MetaldeParser():
         else:
             data['genres'] = []
         pre_num_songs = soup.find(self.text_filter('Anzahl Songs'))
-        num_songs = pre_num_songs.next_sibling.text
-        data['num_songs'] = num_songs
+        if pre_num_songs:
+            num_songs = pre_num_songs.next_sibling.text
+            data['num_songs'] = num_songs
+        else:
+            data['num_songs'] = np.nan
         pre_duration = soup.find(self.text_filter('Spieldauer'))
-        duration = pre_duration.next_sibling.text
-        data['duration'] = duration
+        if pre_duration:
+            duration = pre_duration.next_sibling.text
+            data['duration'] = duration
+        else:
+            data['duration'] = '-'
         pre_release_date = soup.find(self.text_filter('Release'))
-        release_date = pre_release_date.next_sibling.text
-        data['release_date'] = release_date
+        if pre_release_date:
+            release_date = pre_release_date.next_sibling.text
+            data['release_date'] = release_date
+        else:
+            data['release_date'] = '-'
         pre_label = soup.find(self.text_filter('Label'))
-        label = pre_label.next_sibling.text
-        data['label'] = label
+        if pre_label:
+            label = pre_label.next_sibling.text
+            data['label'] = label
+        else:
+            data['label'] = '-'
         comments = self.parse_comments(url)
         data['comments'] = comments 
         
@@ -132,7 +151,8 @@ class MetaldeParser():
 
     
 if __name__ == '__main__':
+    from mysqltools import convert_date
     parser = MetaldeParser()
     data = parser.parse_review('https://www.metal.de/reviews/moetley-cruee-the-dirt-soundtrack-371224/')
-    print(data)
+    print(convert_date(data['release_date']))
     
