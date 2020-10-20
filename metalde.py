@@ -154,5 +154,6 @@ if __name__ == '__main__':
     from mysqltools import convert_date
     parser = MetaldeParser()
     data = parser.parse_review('https://www.metal.de/reviews/moetley-cruee-the-dirt-soundtrack-371224/')
-    print(convert_date(data['release_date']))
+    print(data.keys())
+
     
