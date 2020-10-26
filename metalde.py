@@ -88,7 +88,7 @@ class MetaldeParser():
         review_body = soup.find(self.filter('itemprop', 'reviewBody'))
         if review_body:
             p_list = review_body.find_all('p')
-            data['text'] = ' '.join([p.text for p in p_list])
+            data['text'] = ' '.join([p.text for p in p_list]).replace('"',"'")
         else:
             data['text'] = '-'
         publish_date = soup.find(self.filter('class',['date']))

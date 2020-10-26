@@ -29,8 +29,12 @@ class Logger():
 
         Returns - the link to the last review
         """
-        f = open(os.getcwd()+'/'+self.rev_pointer, 'r')
-        return f.read()
+        try:
+            f = open(os.getcwd()+'/'+self.rev_pointer, 'r')
+            last_review = f.read()
+        except:
+            last_review = ''    
+        return last_review
 
     def log(self, logstring):
         """
