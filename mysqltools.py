@@ -14,14 +14,14 @@ def convert_date(date_str):
 
 def create_reviews_db():
     """
-    Creates a database 'metal_reviews_db' with an empty table 
+    Creates a database 'music_reviews_db' with an empty table 
     'metalde'.
     """
     db = mysql.connector.connect(host=host, user=user)
     cursor = db.cursor()
-    db_create_str = "CREATE DATABASE IF NOT EXISTS metal_reviews_db"
+    db_create_str = "CREATE DATABASE IF NOT EXISTS music_reviews_db"
     cursor.execute(db_create_str)
-    cursor.execute('USE metal_reviews_db')
+    cursor.execute('USE music_reviews_db')
     tb_create_str = """
         CREATE TABLE IF NOT EXISTS metalde (
             text MEDIUMTEXT,
@@ -48,10 +48,10 @@ def remove_reviews_db():
     """
     db = mysql.connector.connect(host=host, user=user)
     cursor = db.cursor()
-    cursor.execute('DROP DATABASE metal_reviews_db')
+    cursor.execute('DROP DATABASE music_reviews_db')
 
 def insert_review_in_db(review):
-    db = mysql.connector.connect(host=host, user=user, database='metal_reviews_db')
+    db = mysql.connector.connect(host=host, user=user, database='music_reviews_db')
     cursor = db.cursor()
     text = review['text']
     publish_date = convert_date(review['publish_date'])
@@ -107,7 +107,11 @@ def insert_review_in_db(review):
     
 
 if __name__ == "__main__":
-    remove_reviews_db()
+    try:
+        remove_reviews_db()
+    except:
+        print('database doesnt exist')
+
     create_reviews_db()
 
     parser = metalde.MetaldeParser()
